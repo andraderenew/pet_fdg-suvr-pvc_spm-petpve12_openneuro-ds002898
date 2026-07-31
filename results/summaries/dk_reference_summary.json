@@ -1,0 +1,25 @@
+{
+  "subject": "sub-01",
+  "atlas": "PETPVE12 Desikan-Killiany MNI SPM12",
+  "reference_labels": {
+    "8": "lh-Cerebellum-Cortex",
+    "47": "rh-Cerebellum-Cortex"
+  },
+  "shape": [
+    172,
+    172,
+    93
+  ],
+  "voxel_sizes_mm": [
+    2.799999952316284,
+    2.799999952316284,
+    2.799999952316284
+  ],
+  "voxel_volume_mm3": 21.951998878479017,
+  "cerebellar_atlas_voxels": 4860,
+  "cerebellar_atlas_volume_mm3": 106686.71454940802,
+  "cerebellar_gm30_voxels": 4425,
+  "cerebellar_gm50_voxels": 4224,
+  "gm_weight_sum": 4067.62744140625,
+  "present_label_count": 182
+}

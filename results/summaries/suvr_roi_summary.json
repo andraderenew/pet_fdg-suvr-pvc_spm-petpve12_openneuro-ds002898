@@ -1,0 +1,47 @@
+{
+  "subject": "sub-01",
+  "tracer": "18F-FDG",
+  "static_window": {
+    "selection": "FrameTimesStart >= 1800 and < 5400 seconds",
+    "selected_frames": 225
+  },
+  "suvr_reference": {
+    "name": "bilateral cerebellar cortex",
+    "desikan_killiany_labels": [
+      8,
+      47
+    ],
+    "raw_reference_method": "GM-probability-weighted mean",
+    "pvc_reference_method": "mean positive PVC in GM>=0.5",
+    "raw_reference_value": 18256.302734375,
+    "pvc_reference_values": {
+      "4": 19378.662109375,
+      "5": 19659.51953125,
+      "6": 19976.92578125,
+      "8": 20707.60546875
+    }
+  },
+  "pvc": {
+    "method": "Muller-Gartner three-compartment",
+    "nominal_psf_mm": 5,
+    "sensitivity_psf_mm": [
+      4,
+      6,
+      8
+    ],
+    "gm_threshold": 0.5,
+    "wm_csf_signal_threshold": 0.9
+  },
+  "outputs": {
+    "raw_suvr": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/sub-01_desc-raw_cerebellar-cortex_suvr.nii.gz",
+    "pvc_suvr": {
+      "4": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/sub-01_desc-pvcMG_psf-4mm_cerebellar-cortex_suvr.nii.gz",
+      "5": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/sub-01_desc-pvcMG_psf-5mm_cerebellar-cortex_suvr.nii.gz",
+      "6": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/sub-01_desc-pvcMG_psf-6mm_cerebellar-cortex_suvr.nii.gz",
+      "8": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/sub-01_desc-pvcMG_psf-8mm_cerebellar-cortex_suvr.nii.gz"
+    },
+    "reference_table": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/reference_values.tsv",
+    "roi_table": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/roi_summary.tsv",
+    "sensitivity_table": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/psf_sensitivity.tsv"
+  }
+}

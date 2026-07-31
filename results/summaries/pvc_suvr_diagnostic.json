@@ -1,0 +1,384 @@
+{
+  "subject": "sub-01",
+  "analysis_mask": "Desikan-Killiany labels > 0 and GM probability >= 0.5",
+  "analysis_mask_voxels": 27099,
+  "image_summaries": [
+    {
+      "image": "raw",
+      "voxel_count": 27099,
+      "negative_voxels": 0,
+      "zero_voxels": 0,
+      "positive_voxels": 27099,
+      "negative_percent": 0.0,
+      "zero_percent": 0.0,
+      "above_3_percent": 0.0,
+      "above_5_percent": 0.0,
+      "mean": 1.1130766868591309,
+      "median": 1.1205048561096191,
+      "standard_deviation": 0.21102747321128845,
+      "percentiles": {
+        "0": 0.22412429749965668,
+        "0.1": 0.39615793704986574,
+        "1": 0.6076218700408935,
+        "5": 0.755703729391098,
+        "25": 0.9753592610359192,
+        "50": 1.1205048561096191,
+        "75": 1.2552860975265503,
+        "95": 1.4505734086036681,
+        "99": 1.5945346570014953,
+        "99.9": 1.7163963680267362,
+        "100": 1.8316888809204102
+      }
+    },
+    {
+      "image": "pvc_psf_4mm",
+      "voxel_count": 27099,
+      "negative_voxels": 36,
+      "zero_voxels": 0,
+      "positive_voxels": 27063,
+      "negative_percent": 0.1328462304882099,
+      "zero_percent": 0.0,
+      "above_3_percent": 0.0,
+      "above_5_percent": 0.0,
+      "mean": 1.2218599319458008,
+      "median": 1.2279160022735596,
+      "standard_deviation": 0.3032495975494385,
+      "percentiles": {
+        "0": -2.445768117904663,
+        "0.1": -0.16618508279323582,
+        "1": 0.49138266742229464,
+        "5": 0.7385142862796784,
+        "25": 1.0375059247016907,
+        "50": 1.2279160022735596,
+        "75": 1.4092268347740173,
+        "95": 1.7033568143844604,
+        "99": 1.955240433216096,
+        "99.9": 2.3594729075431826,
+        "100": 2.6388776302337646
+      }
+    },
+    {
+      "image": "pvc_psf_5mm",
+      "voxel_count": 27099,
+      "negative_voxels": 44,
+      "zero_voxels": 0,
+      "positive_voxels": 27055,
+      "negative_percent": 0.1623676150411454,
+      "zero_percent": 0.0,
+      "above_3_percent": 0.0,
+      "above_5_percent": 0.0,
+      "mean": 1.2345231771469116,
+      "median": 1.2382655143737793,
+      "standard_deviation": 0.3204352557659149,
+      "percentiles": {
+        "0": -3.290497303009033,
+        "0.1": -0.3314544854462148,
+        "1": 0.4774055624008179,
+        "5": 0.734441077709198,
+        "25": 1.0389435291290283,
+        "50": 1.2382655143737793,
+        "75": 1.4286108016967773,
+        "95": 1.743701422214508,
+        "99": 2.0298403310775766,
+        "99.9": 2.4571544327735904,
+        "100": 2.767911672592163
+      }
+    },
+    {
+      "image": "pvc_psf_6mm",
+      "voxel_count": 27099,
+      "negative_voxels": 54,
+      "zero_voxels": 0,
+      "positive_voxels": 27045,
+      "negative_percent": 0.19926934573231483,
+      "zero_percent": 0.0,
+      "above_3_percent": 0.0,
+      "above_5_percent": 0.0,
+      "mean": 1.2448647022247314,
+      "median": 1.2445045709609985,
+      "standard_deviation": 0.3375101387500763,
+      "percentiles": {
+        "0": -3.677107095718384,
+        "0.1": -0.40227782684564595,
+        "1": 0.466995462179184,
+        "5": 0.7285854101181031,
+        "25": 1.0371617078781128,
+        "50": 1.2445045709609985,
+        "75": 1.4448775053024292,
+        "95": 1.790403866767883,
+        "99": 2.105591993331909,
+        "99.9": 2.555042928695679,
+        "100": 2.869603157043457
+      }
+    },
+    {
+      "image": "pvc_psf_8mm",
+      "voxel_count": 27099,
+      "negative_voxels": 63,
+      "zero_voxels": 0,
+      "positive_voxels": 27036,
+      "negative_percent": 0.23248090335436733,
+      "zero_percent": 0.0,
+      "above_3_percent": 0.0036901730691169415,
+      "above_5_percent": 0.0,
+      "mean": 1.2608577013015747,
+      "median": 1.2485108375549316,
+      "standard_deviation": 0.3711913228034973,
+      "percentiles": {
+        "0": -3.3338325023651123,
+        "0.1": -0.5098783987760543,
+        "1": 0.4562370765209198,
+        "5": 0.715369200706482,
+        "25": 1.0258192420005798,
+        "50": 1.2485108375549316,
+        "75": 1.474027395248413,
+        "95": 1.8836833357810971,
+        "99": 2.254044203758241,
+        "99.9": 2.7023856558799957,
+        "100": 3.037181854248047
+      }
+    }
+  ],
+  "primary_gray_roi_definition": {
+    "cortical_labels": "1001-1035 and 2001-2035, excluding 1004 and 2004",
+    "subcortical_labels": [
+      10,
+      11,
+      12,
+      13,
+      17,
+      18,
+      26,
+      28,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      58,
+      60
+    ]
+  },
+  "primary_gray_roi_count": 84,
+  "primary_low_gm_support_count": 3,
+  "primary_negative_nominal_mean_count": 0,
+  "primary_nonfinite_nominal_mean_count": 0,
+  "all_atlas_negative_nominal_roi_count": 1,
+  "all_atlas_negative_nominal_rois": [
+    {
+      "label": 85,
+      "region": "label-85",
+      "gm50_voxel_count": 1,
+      "suvr_psf5_mean": -0.2170891165733337
+    }
+  ],
+  "primary_psf_cv_above_10pct_count": 0,
+  "primary_psf_cv_above_20pct_count": 0,
+  "top_primary_psf_sensitivity": [
+    {
+      "label": 1032,
+      "region": "ctx-lh-frontalpole",
+      "suvr_psf4": 1.5671981573104858,
+      "suvr_psf5": 1.646715521812439,
+      "suvr_psf6": 1.729405164718628,
+      "suvr_psf8": 1.8955622911453247,
+      "cv_percent": 7.115920899009851,
+      "range": 0.3283641338348388
+    },
+    {
+      "label": 2032,
+      "region": "ctx-rh-frontalpole",
+      "suvr_psf4": 1.7559436559677124,
+      "suvr_psf5": 1.830922245979309,
+      "suvr_psf6": 1.908860683441162,
+      "suvr_psf8": 2.0639593601226807,
+      "cv_percent": 6.037496750311221,
+      "range": 0.3080157041549682
+    },
+    {
+      "label": 2019,
+      "region": "ctx-rh-parsorbitalis",
+      "suvr_psf4": 1.475422739982605,
+      "suvr_psf5": 1.5272828340530396,
+      "suvr_psf6": 1.5804909467697144,
+      "suvr_psf8": 1.6858302354812622,
+      "cv_percent": 4.969708214234304,
+      "range": 0.2104074954986572
+    },
+    {
+      "label": 1019,
+      "region": "ctx-lh-parsorbitalis",
+      "suvr_psf4": 1.424197554588318,
+      "suvr_psf5": 1.4667776823043823,
+      "suvr_psf6": 1.5122778415679932,
+      "suvr_psf8": 1.6072108745574951,
+      "cv_percent": 4.52192573344945,
+      "range": 0.1830133199691772
+    },
+    {
+      "label": 1011,
+      "region": "ctx-lh-lateraloccipital",
+      "suvr_psf4": 1.320555567741394,
+      "suvr_psf5": 1.366095781326294,
+      "suvr_psf6": 1.405917406082153,
+      "suvr_psf8": 1.469238519668579,
+      "cv_percent": 3.926878478868568,
+      "range": 0.148682951927185
+    },
+    {
+      "label": 1027,
+      "region": "ctx-lh-rostralmiddlefrontal",
+      "suvr_psf4": 1.6648778915405271,
+      "suvr_psf5": 1.7146029472351074,
+      "suvr_psf6": 1.7620880603790283,
+      "suvr_psf8": 1.8486335277557373,
+      "cv_percent": 3.8757113139418458,
+      "range": 0.1837556362152099
+    },
+    {
+      "label": 2011,
+      "region": "ctx-rh-lateraloccipital",
+      "suvr_psf4": 1.4478434324264526,
+      "suvr_psf5": 1.4960203170776367,
+      "suvr_psf6": 1.5375081300735474,
+      "suvr_psf8": 1.6040822267532349,
+      "cv_percent": 3.768845806283769,
+      "range": 0.1562387943267822
+    },
+    {
+      "label": 2027,
+      "region": "ctx-rh-rostralmiddlefrontal",
+      "suvr_psf4": 1.670132756233215,
+      "suvr_psf5": 1.7123750448226929,
+      "suvr_psf6": 1.7536821365356443,
+      "suvr_psf8": 1.8314646482467647,
+      "cv_percent": 3.4184243363416127,
+      "range": 0.1613318920135498
+    },
+    {
+      "label": 1020,
+      "region": "ctx-lh-parstriangularis",
+      "suvr_psf4": 1.4732931852340698,
+      "suvr_psf5": 1.5113905668258667,
+      "suvr_psf6": 1.5471771955490112,
+      "suvr_psf8": 1.610679030418396,
+      "cv_percent": 3.294681125846948,
+      "range": 0.1373858451843261
+    },
+    {
+      "label": 2015,
+      "region": "ctx-rh-middletemporal",
+      "suvr_psf4": 1.3215736150741575,
+      "suvr_psf5": 1.351935625076294,
+      "suvr_psf6": 1.3814669847488403,
+      "suvr_psf8": 1.4354236125946045,
+      "cv_percent": 3.0599163745058697,
+      "range": 0.1138499975204467
+    },
+    {
+      "label": 2020,
+      "region": "ctx-rh-parstriangularis",
+      "suvr_psf4": 1.4811265468597412,
+      "suvr_psf5": 1.514035701751709,
+      "suvr_psf6": 1.5457671880722046,
+      "suvr_psf8": 1.6045554876327517,
+      "cv_percent": 2.962815984257625,
+      "range": 0.1234289407730102
+    },
+    {
+      "label": 1015,
+      "region": "ctx-lh-middletemporal",
+      "suvr_psf4": 1.2232497930526731,
+      "suvr_psf5": 1.250800609588623,
+      "suvr_psf6": 1.2771451473236084,
+      "suvr_psf8": 1.3241846561431885,
+      "cv_percent": 2.931941185624917,
+      "range": 0.1009348630905151
+    },
+    {
+      "label": 2009,
+      "region": "ctx-rh-inferiortemporal",
+      "suvr_psf4": 1.2810708284378052,
+      "suvr_psf5": 1.3067851066589355,
+      "suvr_psf6": 1.3331538438796997,
+      "suvr_psf8": 1.385191559791565,
+      "cv_percent": 2.905309941253649,
+      "range": 0.1041207313537597
+    },
+    {
+      "label": 1009,
+      "region": "ctx-lh-inferiortemporal",
+      "suvr_psf4": 1.2391729354858398,
+      "suvr_psf5": 1.2642357349395752,
+      "suvr_psf6": 1.2898317575454712,
+      "suvr_psf8": 1.3391133546829224,
+      "cv_percent": 2.8816283300167163,
+      "range": 0.0999404191970825
+    },
+    {
+      "label": 1008,
+      "region": "ctx-lh-inferiorparietal",
+      "suvr_psf4": 1.274085283279419,
+      "suvr_psf5": 1.3038161993026731,
+      "suvr_psf6": 1.3307477235794067,
+      "suvr_psf8": 1.3770233392715454,
+      "cv_percent": 2.8640262654725164,
+      "range": 0.1029380559921264
+    },
+    {
+      "label": 2012,
+      "region": "ctx-rh-lateralorbitofrontal",
+      "suvr_psf4": 1.4008725881576538,
+      "suvr_psf5": 1.4307903051376345,
+      "suvr_psf6": 1.459683537483215,
+      "suvr_psf8": 1.5127440690994265,
+      "cv_percent": 2.843380421748047,
+      "range": 0.1118714809417724
+    },
+    {
+      "label": 2008,
+      "region": "ctx-rh-inferiorparietal",
+      "suvr_psf4": 1.391136646270752,
+      "suvr_psf5": 1.4241749048233032,
+      "suvr_psf6": 1.452863693237305,
+      "suvr_psf8": 1.500564455986023,
+      "cv_percent": 2.784920707434555,
+      "range": 0.109427809715271
+    },
+    {
+      "label": 2003,
+      "region": "ctx-rh-caudalmiddlefrontal",
+      "suvr_psf4": 1.4872267246246338,
+      "suvr_psf5": 1.5205076932907104,
+      "suvr_psf6": 1.5507299900054932,
+      "suvr_psf8": 1.6035969257354736,
+      "cv_percent": 2.7775796639617147,
+      "range": 0.1163702011108398
+    },
+    {
+      "label": 60,
+      "region": "rh-VentralDC",
+      "suvr_psf4": 0.7087547183036804,
+      "suvr_psf5": 0.6977521777153015,
+      "suvr_psf6": 0.6851450800895691,
+      "suvr_psf8": 0.6576588749885559,
+      "cv_percent": 2.772729792828747,
+      "range": 0.0510958433151245
+    },
+    {
+      "label": 1003,
+      "region": "ctx-lh-caudalmiddlefrontal",
+      "suvr_psf4": 1.5880615711212158,
+      "suvr_psf5": 1.6223609447479248,
+      "suvr_psf6": 1.65394127368927,
+      "suvr_psf8": 1.7107219696044922,
+      "cv_percent": 2.7456722439125456,
+      "range": 0.1226603984832763
+    }
+  ],
+  "diagnostic_tables": {
+    "primary_gray_roi": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/diagnostic_primary_gray_roi.tsv",
+    "primary_gray_psf_sensitivity": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/diagnostic_primary_gray_psf_sensitivity.tsv"
+  }
+}

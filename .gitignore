@@ -1,0 +1,55 @@
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Temporary and log files
+*.tmp
+*.log
+cache/
+reports/tmp/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.npy
+*.npz
+
+# MATLAB
+*.asv
+*.m~
+*.mex*
+*.mat
+
+# Local datasets and processing workspaces
+data/
+dataset/
+bids/
+derivatives/
+work/
+results/raw_exports/
+
+# Neuroimaging and acquisition files
+*.nii
+*.nii.gz
+*.mgh
+*.mgz
+*.dcm
+*.ima
+*.edat2
+*.fsf
+*.set
+*.fdt
+*.bdf
+*.vhdr
+*.eeg
+*.vmrk
+
+# Common heavy derivative directories
+surf/
+label/
+mri/
+stats/
+fsaverage*/
+*feat/
+*ica/

@@ -1,0 +1,42 @@
+{
+  "creators": [
+    {
+      "name": "Andrade Rey, Rene",
+      "orcid": "0000-0001-5627-579X"
+    }
+  ],
+  "title": "FDG PET SUVR and PETPVE12 partial-volume correction using OpenNeuro ds002898",
+  "description": "Completed quality-controlled single-subject research portfolio demonstration using OpenNeuro ds002898: dynamic FDG PET frame selection, MCFLIRT motion correction, static PET construction, SPM12 segmentation and PET-T1 coregistration, PETPVE12 Muller-Gartner PVC, bilateral cerebellar-cortex SUVR, regional atlas summaries, and 4/5/6/8 mm PSF sensitivity analysis.",
+  "version": "1.0.0",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "mit",
+  "language": "eng",
+  "keywords": [
+    "PET",
+    "FDG",
+    "SUVR",
+    "partial-volume correction",
+    "PETPVE12",
+    "SPM12",
+    "OpenNeuro",
+    "ds002898",
+    "neuroimaging",
+    "motion correction",
+    "PSF sensitivity"
+  ],
+  "notes": "Single-subject research portfolio demonstration using a healthy young adult. Not intended for clinical or diagnostic use. Raw OpenNeuro data and intermediate imaging derivatives are not included.",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/andraderenew/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://doi.org/10.18112/openneuro.ds002898.v1.0.0",
+      "relation": "references",
+      "resource_type": "dataset"
+    }
+  ],
+  "publication_date": "2026-07-31"
+}

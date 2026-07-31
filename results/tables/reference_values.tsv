@@ -1,0 +1,6 @@
+subject	image	psf_mm	reference_region	atlas_labels	reference_method	reference_value	reference_voxels	gm_weight_sum
+sub-01	raw		bilateral cerebellar cortex	8;47	GM-probability-weighted mean	18256.302734375	4740	4067.627685546875
+sub-01	pvcMG	4	bilateral cerebellar cortex	8;47	mean positive PVC in GM>=0.5	19378.662109375	4218	NA
+sub-01	pvcMG	5	bilateral cerebellar cortex	8;47	mean positive PVC in GM>=0.5	19659.51953125	4217	NA
+sub-01	pvcMG	6	bilateral cerebellar cortex	8;47	mean positive PVC in GM>=0.5	19976.92578125	4216	NA
+sub-01	pvcMG	8	bilateral cerebellar cortex	8;47	mean positive PVC in GM>=0.5	20707.60546875	4215	NA
