@@ -378,7 +378,7 @@
     }
   ],
   "diagnostic_tables": {
-    "primary_gray_roi": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/diagnostic_primary_gray_roi.tsv",
-    "primary_gray_psf_sensitivity": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/results/diagnostic_primary_gray_psf_sensitivity.tsv"
+    "primary_gray_roi": "work/sub-01/results/diagnostic_primary_gray_roi.tsv",
+    "primary_gray_psf_sensitivity": "work/sub-01/results/diagnostic_primary_gray_psf_sensitivity.tsv"
   }
 }

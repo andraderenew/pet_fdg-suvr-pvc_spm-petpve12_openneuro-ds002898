@@ -1,0 +1,12 @@
+figure	decision	reason
+qc_contact_sheet_sub-01.png	KEEP_PRIMARY	Motion and static-PET QC
+qc_dk_atlas_reference_contact_sheet.png	KEEP_SUPPORTING	Atlas and bilateral cerebellar-reference QC
+qc_pvc_suvr_robust_diagnostic.png	KEEP_SUPPORTING	Dense diagnostic summary; useful as supplementary QC
+qc_roi_psf_sensitivity.png	REPLACE_PRIMARY	Includes non-primary and low-support regions; replaced by robust primary-gray figure
+qc_roi_raw_vs_pvc5.png	KEEP_PRIMARY	Clear raw-versus-nominal-PVC ROI comparison
+qc_spm_coreg_axial.png	KEEP_SOURCE_QC	Retained as source panel for combined coregistration QC
+qc_spm_coreg_coronal.png	KEEP_SOURCE_QC	Retained as source panel for combined coregistration QC
+qc_spm_coreg_sagittal.png	KEEP_SOURCE_QC	Retained as source panel for combined coregistration QC
+qc_suvr_psf_contact_sheet.png	KEEP_PRIMARY	Clear raw/PVC/PSF-difference image summary
+qc_spm_coreg_3plane.png	KEEP_PRIMARY	Approved combined three-plane PET-T1 coregistration QC
+qc_roi_psf_sensitivity_robust_primary_gray.png	KEEP_PRIMARY	Approved robust PSF sensitivity plot for 81 primary-gray ROIs with GM support >=20 voxels

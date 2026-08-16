@@ -72,16 +72,37 @@ Primary gray-matter ROIs include cortical Desikan-Killiany labels and selected
 subcortical gray-matter labels. White-matter and non-primary atlas labels are
 excluded from the headline sensitivity summary.
 
-- Valid primary gray-matter ROIs: 84
-- Median coefficient of variation across PSF assumptions: 1.488%
-- Maximum coefficient of variation: 7.116%
-- Region with maximum coefficient of variation: ctx-lh-frontalpole
-- Primary ROIs with CV above 10%: 0
-- Primary ROIs with CV above 20%: 0
-- Primary ROIs with negative nominal PVC mean: 0
+The predefined primary-gray set contains 84 ROIs. Three have fewer than
+20 voxels with GM probability >= 0.5:
 
-The complete public ROI summary contains 181 data rows. Labels outside the
-primary gray-matter set are not used for the headline conclusion.
+- left pallidum: 1 voxel;
+- right pallidum: 2 voxels;
+- left frontal pole: 17 voxels.
+
+Across all 84 predefined ROIs, the cerebellar-normalized PVC-SUVR PSF CV has
+a median of 1.488% and a maximum of 7.116%. The maximum occurs in the
+left frontal pole, which is one of the low-support ROIs.
+
+Using the post hoc QA support threshold, the robustness subset contains 81 ROIs with at least 20 GM-support voxels:
+
+- median cerebellar-normalized PVC-SUVR PSF CV: 1.437%;
+- maximum cerebellar-normalized PVC-SUVR PSF CV: 6.037%;
+- region with maximum robust SUVR CV: `ctx-rh-frontalpole`;
+- robust ROIs with SUVR CV above 10%: 0;
+- median PVC-activity PSF CV before SUVR normalization: 3.029%;
+- maximum PVC-activity PSF CV before SUVR normalization: 8.587%;
+- robust ROIs with PVC-activity CV above 10%: 0;
+- primary ROIs with negative nominal PVC mean: 0.
+
+The PSF-specific cerebellar reference values are 19378.662, 19659.520,
+19976.926 and 20707.605 for the 4, 5, 6 and 8 mm assumptions respectively.
+The reference therefore increases by 6.858% between 4 and 8 mm. Because each
+PVC image is normalized by its own reference, the SUVR CV reflects both
+regional PVC sensitivity and PSF-dependent normalization. The accompanying
+PVC-activity CV isolates regional sensitivity before SUVR normalization.
+
+The complete public ROI summary retains all atlas labels and all 84 predefined
+primary-gray ROIs. Low-support ROIs are flagged rather than deleted.
 
 ## Public outputs
 

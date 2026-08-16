@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_ROOT="${PET_PROJECT_ROOT:-$REPO_ROOT}"
+export PET_PROJECT_ROOT="$PROJECT_ROOT"
+SPM12_DIR="${SPM12_DIR:-}"
+if [[ -z "$SPM12_DIR" ]]; then
+    echo "ERROR: set SPM12_DIR to the SPM12 installation directory" >&2
+    exit 1
+fi
+
 SUBJECT="sub-01"
-DATASET="/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/openneuro-ds002898"
-PROJECT_ROOT="/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898"
+DATASET="$PROJECT_ROOT/openneuro-ds002898"
 WORK="$PROJECT_ROOT/work/$SUBJECT"
 SPM_WORK="$WORK/spm"
-SPM12_DIR="/home/andraderenew/Downloads/spm12"
-MATLAB_BIN="/usr/local/bin/matlab"
+MATLAB_BIN="${MATLAB_BIN:-$(command -v matlab 2>/dev/null || true)}"
 
 T1_GZ="$DATASET/$SUBJECT/anat/${SUBJECT}_T1w.nii.gz"
 PET_GZ="$WORK/${SUBJECT}_desc-30to90min_res-2p8mm_moco_mean_pet.nii.gz"
@@ -18,7 +25,9 @@ PET_NII="$SPM_WORK/${SUBJECT}_desc-30to90min_res-2p8mm_moco_mean_pet.nii"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MATLAB_FUNCTION="$SCRIPT_DIR/spm_segment_and_coregister_sub01.m"
 QC_SCRIPT="$SCRIPT_DIR/build_spm_coreg_qc_sub01.py"
-MATLAB_LOG="$HOME/Downloads/ds002898_${SUBJECT}_spm_segment_coreg_v2_$(date +%Y%m%d_%H%M%S).log"
+LOG_DIR="$WORK/logs"
+mkdir -p "$LOG_DIR"
+MATLAB_LOG="$LOG_DIR/ds002898_${SUBJECT}_spm_segment_coreg_v2_$(date +%Y%m%d_%H%M%S).log"
 
 die() {
     echo "ERROR: $*" >&2

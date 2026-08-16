@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_ROOT="${PET_PROJECT_ROOT:-$REPO_ROOT}"
+export PET_PROJECT_ROOT="$PROJECT_ROOT"
+SPM12_DIR="${SPM12_DIR:-}"
+
 SUBJECT="sub-01"
-WORK="/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/$SUBJECT"
+WORK="$PROJECT_ROOT/work/$SUBJECT"
 REPORT="$WORK/qc_contact_sheet_sub-01.png"
 TEXT_REPORT="$WORK/qc_motion_readable_sub-01.txt"
 

@@ -1,5 +1,5 @@
 {
-  "parameter_file": "/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/sub-01_desc-30to90min_res-2p8mm_moco_pet.par",
+  "parameter_file": "work/sub-01/sub-01_desc-30to90min_res-2p8mm_moco_pet.par",
   "frame_count": 225,
   "maximum_absolute_rotation_radians": [
     0.028976,

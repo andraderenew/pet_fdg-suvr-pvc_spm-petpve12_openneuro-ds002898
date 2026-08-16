@@ -1,0 +1,3 @@
+population	n_rois	suvr_cv_median_percent	suvr_cv_max_percent	pvc_activity_cv_median_percent	pvc_activity_cv_max_percent	suvr_cv_gt10_count	pvc_activity_cv_gt10_count
+all_predefined_primary_gray	84	1.4878067700406714	7.115920899009851	3.063152409913449	9.675626305923451	0	0
+robust_primary_gray_gm20	81	1.4366986814905816	6.037496750311221	3.0289178454729178	8.58715489301545	0	0

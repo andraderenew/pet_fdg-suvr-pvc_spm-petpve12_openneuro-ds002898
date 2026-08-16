@@ -18,6 +18,23 @@ The PETPVE12 Desikan-Killiany atlas was inverse-warped from MNI space to the
 subject T1, then coregistered and nearest-neighbour resliced to the PET grid.
 Bilateral cerebellar cortex labels 8 and 47 formed the SUVR reference region.
 
-Headline PSF-sensitivity statistics were restricted to primary cortical and
-subcortical gray-matter ROIs. The full atlas output was retained as a
-transparent supplementary table.
+For raw PET, the bilateral cerebellar reference was calculated as a
+GM-probability-weighted mean within Desikan-Killiany labels 8 and 47. For each
+PVC PSF output, the reference was calculated as the mean of positive PVC
+values within the same cerebellar labels and GM probability >= 0.5. Each PVC
+image was divided by its own PSF-specific reference value.
+
+PSF sensitivity was quantified in two complementary ways: coefficient of
+variation across the 4/5/6/8 mm cerebellar-normalized PVC SUVR values, and
+coefficient of variation across the corresponding regional PVC activities
+before SUVR normalization. The former therefore measures sensitivity of the
+complete PVC-plus-normalization workflow rather than isolated regional PVC
+sensitivity.
+
+The 20-voxel GM-support threshold was introduced post hoc during QA and was
+used only to define a robustness subset. Headline robustness statistics were
+therefore restricted to predefined cortical and subcortical primary
+gray-matter ROIs with at least 20 voxels satisfying GM probability >= 0.5.
+All 84 predefined primary ROIs remain in the public tables; three ROIs below
+this support threshold are explicitly flagged rather than silently removed.
+The full atlas output is retained as a transparent supplementary table.

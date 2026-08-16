@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_ROOT="${PET_PROJECT_ROOT:-$REPO_ROOT}"
+export PET_PROJECT_ROOT="$PROJECT_ROOT"
+SPM12_DIR="${SPM12_DIR:-}"
+if [[ -z "$SPM12_DIR" ]]; then
+    echo "ERROR: set SPM12_DIR to the SPM12 installation directory" >&2
+    exit 1
+fi
+
 SUBJECT="sub-01"
-PROJECT_ROOT="/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898"
 WORK="$PROJECT_ROOT/work/$SUBJECT"
 SPM_WORK="$WORK/spm"
-SPM12_DIR="/home/andraderenew/Downloads/spm12"
 PETPVE12_DIR="$SPM12_DIR/toolbox/petpve12"
-MATLAB_BIN="/usr/local/bin/matlab"
+MATLAB_BIN="${MATLAB_BIN:-$(command -v matlab 2>/dev/null || true)}"
 REPORT="$WORK/petpve12_input_audit.txt"
 
 PET="$SPM_WORK/${SUBJECT}_desc-30to90min_res-2p8mm_moco_mean_pet.nii"
