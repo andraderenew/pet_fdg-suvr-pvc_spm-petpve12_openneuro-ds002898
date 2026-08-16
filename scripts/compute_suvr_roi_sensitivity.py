@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 import csv
 import json
 from pathlib import Path
@@ -11,8 +13,10 @@ import pandas as pd
 
 subject = "sub-01"
 project_root = Path(
-    "/media/andraderenew/Elements/neuroimaging/"
-    "pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898"
+    os.environ.get(
+        "PET_PROJECT_ROOT",
+        str(Path(__file__).resolve().parents[1]),
+    )
 )
 work = project_root / "work" / subject
 spm_work = work / "spm"
@@ -31,7 +35,7 @@ atlas_path = (
     / f"{subject}_space-pet_desc-desikan-killiany_atlas.nii.gz"
 )
 descriptor_path = (
-    Path("/home/andraderenew/Downloads/spm12/toolbox/petpve12")
+    (Path(os.environ["SPM12_DIR"]) / "toolbox" / "petpve12")
     / "Atlases"
     / "Desikan-Killiany_MNI_SPM12.txt"
 )
@@ -187,13 +191,13 @@ for psf in (4, 5, 6, 8):
             "reference_method": "mean positive PVC in GM>=0.5",
             "reference_value": pvc_reference[psf],
             "reference_voxels": int(np.count_nonzero(valid)),
-            "gm_weight_sum": "",
+            "gm_weight_sum": "NA",
         }
     )
 
 reference_df = pd.DataFrame(reference_rows)
 reference_path = results / "reference_values.tsv"
-reference_df.to_csv(reference_path, sep="\t", index=False)
+reference_df.to_csv(reference_path, sep="\t", index=False, na_rep="NA")
 
 voxel_volume = float(abs(np.linalg.det(pet_img.affine[:3, :3])))
 roi_rows: list[dict[str, object]] = []
@@ -248,7 +252,7 @@ for label in sorted(value for value in np.unique(atlas) if value != 0):
 
 roi_df = pd.DataFrame(roi_rows)
 roi_path = results / "roi_summary.tsv"
-roi_df.to_csv(roi_path, sep="\t", index=False)
+roi_df.to_csv(roi_path, sep="\t", index=False, na_rep="NA")
 
 sensitivity_rows: list[dict[str, object]] = []
 

@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_ROOT="${PET_PROJECT_ROOT:-$REPO_ROOT}"
+export PET_PROJECT_ROOT="$PROJECT_ROOT"
+SPM12_DIR="${SPM12_DIR:-}"
+
 SUBJECT="sub-01"
-PROJECT_ROOT="/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898"
 WORK="$PROJECT_ROOT/work/$SUBJECT"
 RESULTS="$WORK/results"
 ATLAS="$WORK/atlas"
@@ -22,6 +26,10 @@ required=(
     "$RESULTS/psf_sensitivity.tsv"
     "$RESULTS/diagnostic_primary_gray_roi.tsv"
     "$RESULTS/diagnostic_primary_gray_psf_sensitivity.tsv"
+    "$RESULTS/diagnostic_primary_gray_psf_decomposition.tsv"
+    "$RESULTS/robust_primary_gray_psf_summary.tsv"
+    "$RESULTS/qc_roi_psf_sensitivity_robust_primary_gray.png"
+    "$WORK/spm/qc_spm_coreg_3plane.png"
     "$RESULTS/pvc_suvr_diagnostic.json"
     "$RESULTS/qc_pvc_suvr_robust_diagnostic.png"
     "$RESULTS/suvr_roi_summary.json"
@@ -73,6 +81,15 @@ primary_sensitivity = pd.read_csv(
     results / "diagnostic_primary_gray_psf_sensitivity.tsv",
     sep="\t",
 )
+
+decomposition = pd.read_csv(
+    results / "diagnostic_primary_gray_psf_decomposition.tsv",
+    sep="\t",
+)
+robust_summary = pd.read_csv(
+    results / "robust_primary_gray_psf_summary.tsv",
+    sep="\t",
+)
 diagnostic = json.loads(
     (results / "pvc_suvr_diagnostic.json").read_text(encoding="utf-8")
 )
@@ -94,6 +111,84 @@ if not np.all(np.isfinite(reference["reference_value"])):
     raise SystemExit("ERROR: non-finite reference values")
 if np.any(reference["reference_value"] <= 0):
     raise SystemExit("ERROR: non-positive reference value")
+
+if len(decomposition) != 84:
+    raise SystemExit("ERROR: expected 84 predefined primary gray ROIs")
+
+if int(decomposition["low_gm_support_lt20"].sum()) != 3:
+    raise SystemExit("ERROR: expected exactly three low-GM-support primary ROIs")
+
+robust = decomposition[
+    decomposition["robust_primary_gm20"] == 1
+].copy()
+
+if len(robust) != 81:
+    raise SystemExit("ERROR: expected 81 robust primary gray ROIs")
+
+robust_numeric_columns = [
+    "suvr_cv_percent",
+    "pvc_psf4_mean",
+    "pvc_psf5_mean",
+    "pvc_psf6_mean",
+    "pvc_psf8_mean",
+    "pvc_activity_cv_percent",
+]
+
+if not np.all(
+    np.isfinite(
+        robust[robust_numeric_columns].to_numpy(dtype=float)
+    )
+):
+    raise SystemExit(
+        "ERROR: incomplete/non-finite robust four-PSF data"
+    )
+
+if np.any(robust["suvr_cv_percent"] > 10.0):
+    raise SystemExit("ERROR: robust primary ROI with SUVR PSF CV above 10%")
+
+if np.any(robust["pvc_activity_cv_percent"] > 10.0):
+    raise SystemExit("ERROR: robust primary ROI with PVC-activity PSF CV above 10%")
+
+expected = {
+    "suvr_median": 1.4366986814905816,
+    "suvr_max": 6.037496750311221,
+    "pvc_median": 3.0289178454729178,
+    "pvc_max": 8.58715489301545,
+}
+
+observed = {
+    "suvr_median": float(robust["suvr_cv_percent"].median()),
+    "suvr_max": float(robust["suvr_cv_percent"].max()),
+    "pvc_median": float(robust["pvc_activity_cv_percent"].median()),
+    "pvc_max": float(robust["pvc_activity_cv_percent"].max()),
+}
+
+for key in expected:
+    if not np.isclose(
+        observed[key],
+        expected[key],
+        rtol=0.0,
+        atol=1e-10,
+    ):
+        raise SystemExit(
+            f"ERROR: robust metric drift for {key}: "
+            f"{observed[key]} vs {expected[key]}"
+        )
+
+if len(robust_summary) != 2:
+    raise SystemExit("ERROR: robust PSF summary must contain two populations")
+
+robust_row = robust_summary[
+    robust_summary["population"] == "robust_primary_gray_gm20"
+]
+
+if len(robust_row) != 1:
+    raise SystemExit("ERROR: robust summary population missing")
+
+if int(robust_row.iloc[0]["n_rois"]) != 81:
+    raise SystemExit("ERROR: robust summary n_rois is not 81")
+
+print("Robust primary-gray PSF validation: OK")
 
 if diagnostic["primary_negative_nominal_mean_count"] != 0:
     raise SystemExit("ERROR: negative nominal mean in a primary gray ROI")

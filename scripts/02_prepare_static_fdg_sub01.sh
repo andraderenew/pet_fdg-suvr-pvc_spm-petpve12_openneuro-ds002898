@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_ROOT="${PET_PROJECT_ROOT:-$REPO_ROOT}"
+export PET_PROJECT_ROOT="$PROJECT_ROOT"
+SPM12_DIR="${SPM12_DIR:-}"
+
 SUBJECT="${1:-sub-01}"
-DATASET="/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/openneuro-ds002898"
-PROJECT_ROOT="/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898"
+DATASET="$PROJECT_ROOT/openneuro-ds002898"
 WORK="$PROJECT_ROOT/work/$SUBJECT"
 
 PET_GZ="$DATASET/$SUBJECT/pet/${SUBJECT}_task-rest_trc-18FFDG_rec-acdyn_run-001_pet.nii.gz"
@@ -17,7 +21,9 @@ MOCO_BASE="${MOCO%.nii.gz}"
 PAR_CANONICAL="${MOCO_BASE}.par"
 MOCO_MEAN="$WORK/${SUBJECT}_desc-30to90min_res-2p8mm_moco_mean_pet.nii.gz"
 MOCO_SUM="$WORK/${SUBJECT}_desc-30to90min_res-2p8mm_moco_sum_pet.nii.gz"
-LOG="$HOME/Downloads/ds002898_${SUBJECT}_prepare_static_$(date +%Y%m%d_%H%M%S).log"
+LOG_DIR="$WORK/logs"
+mkdir -p "$LOG_DIR"
+LOG="$LOG_DIR/ds002898_${SUBJECT}_prepare_static_$(date +%Y%m%d_%H%M%S).log"
 
 export FSLOUTPUTTYPE=NIFTI_GZ
 exec > >(tee "$LOG") 2>&1

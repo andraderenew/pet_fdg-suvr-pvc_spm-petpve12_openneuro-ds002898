@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 import json
 from pathlib import Path
 
@@ -9,8 +11,10 @@ import numpy as np
 
 subject = "sub-01"
 project_root = Path(
-    "/media/andraderenew/Elements/neuroimaging/"
-    "pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898"
+    os.environ.get(
+        "PET_PROJECT_ROOT",
+        str(Path(__file__).resolve().parents[1]),
+    )
 )
 work = project_root / "work" / subject
 spm_work = work / "spm"

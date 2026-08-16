@@ -18,11 +18,15 @@ The `sub-01` demonstration includes:
 
 ## Validated summary
 
-- 84 primary gray-matter ROIs with valid sensitivity estimates;
-- median PSF coefficient of variation: 1.488%;
-- maximum PSF coefficient of variation: 7.116%;
-- no primary gray-matter ROI above 10% PSF CV;
-- no primary gray-matter ROI with a negative nominal PVC mean.
+- 84 predefined primary gray-matter ROIs;
+- 3 predefined ROIs have GM>=0.5 support below 20 voxels;
+- 81 ROIs form the post hoc QA robustness subset;
+- robust cerebellar-normalized PVC-SUVR PSF CV: median 1.437%, maximum 6.037%;
+- robust PVC-activity PSF CV before SUVR normalization: median 3.029%, maximum 8.587%;
+- no robust primary gray-matter ROI exceeds 10% CV by either measure;
+- no primary gray-matter ROI has a negative nominal PVC mean;
+- PSF-specific cerebellar normalization is explicitly separated from
+  pre-normalization PVC-activity sensitivity.
 
 ## Repository contents
 

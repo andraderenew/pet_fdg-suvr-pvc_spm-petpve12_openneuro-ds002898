@@ -1,11 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_ROOT="${PET_PROJECT_ROOT:-$REPO_ROOT}"
+export PET_PROJECT_ROOT="$PROJECT_ROOT"
+SPM12_DIR="${SPM12_DIR:-}"
+
 SUBJECT="${1:-sub-01}"
-DATASET="/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/openneuro-ds002898"
+DATASET="$PROJECT_ROOT/openneuro-ds002898"
 TOOLS="$HOME/.local/share/openneuro-ds002898-tools"
 AWS="$TOOLS/bin/aws"
-LOG="$HOME/Downloads/ds002898_${SUBJECT}_download.log"
+WORK="$PROJECT_ROOT/work/$SUBJECT"
+LOG_DIR="$WORK/logs"
+mkdir -p "$LOG_DIR"
+LOG="$LOG_DIR/ds002898_${SUBJECT}_download.log"
 
 die() {
     echo "ERROR: $*" >&2
@@ -13,7 +21,7 @@ die() {
 }
 
 [[ "$SUBJECT" =~ ^sub-[A-Za-z0-9]+$ ]] || die "usage: $0 sub-XX"
-[[ -d "/media/andraderenew/Elements" ]] || die "Elements drive is not mounted"
+mkdir -p "$PROJECT_ROOT"
 
 if [[ ! -x "$AWS" ]]; then
     echo "=== INSTALLING ANONYMOUS OPENNEURO DOWNLOAD TOOL ==="

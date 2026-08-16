@@ -1,185 +1,205 @@
 from __future__ import annotations
 
-import json
+import os
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
+
 subject = "sub-01"
+
+repo_root = Path(__file__).resolve().parents[1]
+
 project_root = Path(
-    "/media/andraderenew/Elements/neuroimaging/"
-    "pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898"
+    os.environ.get(
+        "PET_PROJECT_ROOT",
+        str(repo_root),
+    )
 )
+
 work = project_root / "work" / subject
 results = work / "results"
 
-motion_path = work / "motion_summary.json"
-atlas_summary_path = work / "atlas" / "dk_reference_summary.json"
-suvr_summary_path = results / "suvr_roi_summary.json"
-diagnostic_path = results / "pvc_suvr_diagnostic.json"
-primary_sensitivity_path = (
-    results / "diagnostic_primary_gray_psf_sensitivity.tsv"
+decomposition_path = (
+    results
+    / "diagnostic_primary_gray_psf_decomposition.tsv"
 )
 
-for path in (
-    motion_path,
-    atlas_summary_path,
-    suvr_summary_path,
-    diagnostic_path,
-    primary_sensitivity_path,
-):
-    if not path.is_file():
-        raise SystemExit(f"ERROR: missing report input: {path}")
-
-motion = json.loads(motion_path.read_text(encoding="utf-8"))
-atlas = json.loads(atlas_summary_path.read_text(encoding="utf-8"))
-suvr = json.loads(suvr_summary_path.read_text(encoding="utf-8"))
-diagnostic = json.loads(diagnostic_path.read_text(encoding="utf-8"))
-primary = pd.read_csv(primary_sensitivity_path, sep="\t")
-
-valid = primary[primary["cv_percent"].notna()].copy()
-if valid.empty:
-    raise SystemExit("ERROR: no valid primary gray-matter sensitivity rows")
-
-median_cv = float(valid["cv_percent"].median())
-max_cv = float(valid["cv_percent"].max())
-max_row = valid.loc[valid["cv_percent"].idxmax()]
-
-nominal_summary = next(
-    item
-    for item in diagnostic["image_summaries"]
-    if item["image"] == "pvc_psf_5mm"
+robust_summary_path = (
+    results
+    / "robust_primary_gray_psf_summary.tsv"
 )
 
-report = f"""# OpenNeuro ds002898 sub-01 FDG PET analysis
+required = [
+    decomposition_path,
+    robust_summary_path,
+    repo_root / "docs" / "RESULTS_SUB01.md",
+    repo_root / "docs" / "METHODS_SUB01.md",
+]
 
-## Scope
+for path in required:
+    if not path.is_file() or path.stat().st_size == 0:
+        raise SystemExit(
+            f"ERROR: missing report input: {path}"
+        )
 
-This repository contains a reproducible single-subject research portfolio
-demonstration using public OpenNeuro dataset `ds002898`. It is not intended
-for clinical or diagnostic use.
+decomposition = pd.read_csv(
+    decomposition_path,
+    sep="\t",
+)
 
-## Data and static PET construction
+summary = pd.read_csv(
+    robust_summary_path,
+    sep="\t",
+)
 
-- Subject: `{subject}`
-- Tracer: 18F-FDG
-- Source PET frames: 356
-- Selected frames: 225
-- Selection rule: `FrameTimesStart >= 1800 and < 5400 seconds`
-- Selected starts: 1808 to 5392 seconds
-- Frame duration: 16 seconds
-- Static image: temporal mean after local MCFLIRT motion correction
-- Processing grid: 2.8 mm isotropic, 172 x 172 x 93
+if len(decomposition) != 84:
+    raise SystemExit(
+        f"ERROR: expected 84 primary-gray ROIs, "
+        f"got {len(decomposition)}"
+    )
 
-## Motion quality control
+if int(
+    decomposition["low_gm_support_lt20"].sum()
+) != 3:
+    raise SystemExit(
+        "ERROR: expected three low-support ROIs"
+    )
 
-- Maximum absolute translations (mm): {motion["maximum_absolute_translation_mm"]}
-- Maximum absolute rotations (radians): {motion["maximum_absolute_rotation_radians"]}
-- Maximum frame-to-frame translations (mm): {motion["maximum_frame_to_frame_translation_mm"]}
-- Maximum frame-to-frame rotations (radians): {motion["maximum_frame_to_frame_rotation_radians"]}
+robust = decomposition[
+    decomposition["robust_primary_gm20"] == 1
+].copy()
 
-Motion correction and static-PET visual QC were accepted for continuation.
+if len(robust) != 81:
+    raise SystemExit(
+        f"ERROR: expected 81 robust ROIs, "
+        f"got {len(robust)}"
+    )
 
-## Structural processing
+row = summary[
+    summary["population"]
+    == "robust_primary_gray_gm20"
+]
 
-SPM12 was used for T1 segmentation and T1-to-PET coregistration. Native GM,
-WM and CSF probability maps were resliced to the PET grid. Visual PET-T1
-coregistration QC was accepted.
+if len(row) != 1:
+    raise SystemExit(
+        "ERROR: robust summary row missing"
+    )
 
-## Partial-volume correction
+row = row.iloc[0]
 
-PETPVE12 Muller-Gartner three-compartment PVC was run with:
+expected = {
+    "suvr_cv_median_percent":
+        1.4366986814905816,
+    "suvr_cv_max_percent":
+        6.037496750311221,
+    "pvc_activity_cv_median_percent":
+        3.0289178454729178,
+    "pvc_activity_cv_max_percent":
+        8.58715489301545,
+}
 
-- GM threshold: 0.5
-- WM/CSF signal threshold: 0.9
-- CSF signal estimated from the CSF probability map
-- Nominal protocol-aligned isotropic PSF: 5 mm
-- Sensitivity PSFs: 4, 6 and 8 mm
+for key, expected_value in expected.items():
+    observed = float(row[key])
 
-The 5 mm value follows the published reconstruction post-filter. It is not
-presented as a directly measured effective scanner PSF; therefore all PSF
-outputs are retained and reported.
+    if not np.isclose(
+        observed,
+        expected_value,
+        rtol=0.0,
+        atol=1e-10,
+    ):
+        raise SystemExit(
+            f"ERROR: report metric drift "
+            f"{key}: {observed}"
+        )
 
-Within atlas-labeled voxels with GM probability >= 0.5, the nominal 5 mm PVC
-SUVR image contained {nominal_summary["negative_percent"]:.4f}% negative
-voxels. These were sparse and did not produce a negative mean in any primary
-gray-matter ROI.
+if int(row["n_rois"]) != 81:
+    raise SystemExit(
+        "ERROR: robust report n_rois != 81"
+    )
 
-## SUVR reference region
+results_text = (
+    repo_root
+    / "docs"
+    / "RESULTS_SUB01.md"
+).read_text(
+    encoding="utf-8"
+)
 
-The reference region is bilateral cerebellar cortex from the PETPVE12
-Desikan-Killiany atlas:
+methods_text = (
+    repo_root
+    / "docs"
+    / "METHODS_SUB01.md"
+).read_text(
+    encoding="utf-8"
+)
 
-- Left cerebellar cortex: label 8
-- Right cerebellar cortex: label 47
-- PET-space atlas voxels in bilateral cerebellar cortex: {atlas["cerebellar_atlas_voxels"]}
-- Cerebellar voxels with GM probability >= 0.5: {atlas["cerebellar_gm50_voxels"]}
+required_result_fragments = [
+    "81 ROIs",
+    "1.437%",
+    "6.037%",
+    "3.029%",
+    "8.587%",
+    "6.858%",
+    "low-support",
+]
 
-Raw PET reference activity was calculated as a GM-probability-weighted
-cerebellar mean. PVC reference activity was calculated from positive PVC
-values within cerebellar cortex and GM probability >= 0.5.
+for fragment in required_result_fragments:
+    if fragment not in results_text:
+        raise SystemExit(
+            "ERROR: canonical results document "
+            f"missing: {fragment}"
+        )
 
-## Primary gray-matter PSF sensitivity
+required_method_fragments = [
+    "at least 20 voxels",
+    "post hoc during QA",
+    "All 84 predefined primary ROIs remain",
+]
 
-Primary gray-matter ROIs include cortical Desikan-Killiany labels and selected
-subcortical gray-matter labels. White-matter and non-primary atlas labels are
-excluded from the headline sensitivity summary.
+for fragment in required_method_fragments:
+    if fragment not in methods_text:
+        raise SystemExit(
+            "ERROR: canonical methods document "
+            f"missing: {fragment}"
+        )
 
-- Valid primary gray-matter ROIs: {len(valid)}
-- Median coefficient of variation across PSF assumptions: {median_cv:.3f}%
-- Maximum coefficient of variation: {max_cv:.3f}%
-- Region with maximum coefficient of variation: {max_row["region"]}
-- Primary ROIs with CV above 10%: {diagnostic["primary_psf_cv_above_10pct_count"]}
-- Primary ROIs with CV above 20%: {diagnostic["primary_psf_cv_above_20pct_count"]}
-- Primary ROIs with negative nominal PVC mean: {diagnostic["primary_negative_nominal_mean_count"]}
+(results / "RESULTS_SUB01.md").write_text(
+    results_text,
+    encoding="utf-8",
+)
 
-The complete public ROI summary contains 181 data rows. Labels outside the
-primary gray-matter set are not used for the headline conclusion.
+(results / "METHODS_SUB01.md").write_text(
+    methods_text,
+    encoding="utf-8",
+)
 
-## Public outputs
-
-- `reference_values.tsv`
-- `roi_summary.tsv`
-- `psf_sensitivity.tsv`
-- `diagnostic_primary_gray_roi.tsv`
-- `diagnostic_primary_gray_psf_sensitivity.tsv`
-- `pvc_suvr_diagnostic.json`
-- `qc_pvc_suvr_robust_diagnostic.png`
-- PET motion, coregistration, atlas-reference and SUVR QC figures
-
-Raw OpenNeuro imaging data and intermediate NIfTI files are not intended for
-commit to this repository.
-"""
-
-report_path = results / "RESULTS_SUB01.md"
-report_path.write_text(report, encoding="utf-8")
-
-methods = """# Methods
-
-Dynamic FDG PET from OpenNeuro ds002898 was reduced to the 225 equal-duration
-frames whose BIDS `FrameTimesStart` values were at least 1800 seconds and less
-than 5400 seconds. Frames were resampled to a fixed 2.8 mm isotropic grid to
-fit available memory, motion-corrected with FSL MCFLIRT, and averaged.
-
-The T1-weighted MRI was segmented with SPM12. Bias-corrected T1 and GM, WM and
-CSF probability maps were coregistered and resliced to the PET grid.
-
-PETPVE12 Muller-Gartner PVC was performed with GM threshold 0.5 and WM/CSF
-signal threshold 0.9. The nominal 5 mm isotropic PSF follows the published
-post-reconstruction Gaussian filter. Additional 4, 6 and 8 mm assumptions
-were processed as a sensitivity analysis because the effective reconstructed
-scanner PSF was not directly measured in the dataset.
-
-The PETPVE12 Desikan-Killiany atlas was inverse-warped from MNI space to the
-subject T1, then coregistered and nearest-neighbour resliced to the PET grid.
-Bilateral cerebellar cortex labels 8 and 47 formed the SUVR reference region.
-
-Headline PSF-sensitivity statistics were restricted to primary cortical and
-subcortical gray-matter ROIs. The full atlas output was retained as a
-transparent supplementary table.
-"""
-methods_path = results / "METHODS_SUB01.md"
-methods_path.write_text(methods, encoding="utf-8")
-
-print(report_path)
-print(methods_path)
+print("REPORT_SCIENTIFIC_VALIDATION=PASS")
+print("REPORT_PRIMARY_ROIS=84")
+print("REPORT_LOW_SUPPORT=3")
+print("REPORT_ROBUST_ROIS=81")
+print(
+    "REPORT_SUVR_MEDIAN",
+    float(row["suvr_cv_median_percent"]),
+)
+print(
+    "REPORT_SUVR_MAX",
+    float(row["suvr_cv_max_percent"]),
+)
+print(
+    "REPORT_PVC_MEDIAN",
+    float(
+        row[
+            "pvc_activity_cv_median_percent"
+        ]
+    ),
+)
+print(
+    "REPORT_PVC_MAX",
+    float(
+        row[
+            "pvc_activity_cv_max_percent"
+        ]
+    ),
+)

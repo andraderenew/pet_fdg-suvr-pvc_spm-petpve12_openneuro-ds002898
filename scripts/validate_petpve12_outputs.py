@@ -1,17 +1,20 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import nibabel as nib
 import numpy as np
 
 subject = "sub-01"
-root = Path(
-    "/media/andraderenew/Elements/neuroimaging/"
-    "pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/"
-    "work/sub-01/petpve12"
+project_root = Path(
+    os.environ.get(
+        "PET_PROJECT_ROOT",
+        str(Path(__file__).resolve().parents[1]),
+    )
 )
+root = project_root / "work" / subject / "petpve12"
 
 summaries: list[dict[str, object]] = []
 

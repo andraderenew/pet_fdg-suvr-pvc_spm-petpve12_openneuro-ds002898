@@ -2,8 +2,16 @@ function spm_segment_and_coregister_sub01
 clear;
 clc;
 
-spm12_dir = '/home/andraderenew/Downloads/spm12';
-work_dir = '/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01/spm';
+subject = 'sub-01';
+project_root = getenv('PET_PROJECT_ROOT');
+if isempty(project_root)
+    project_root = fileparts(fileparts(mfilename('fullpath')));
+end
+spm12_dir = getenv('SPM12_DIR');
+if isempty(spm12_dir)
+    error('Set SPM12_DIR to the SPM12 installation directory.');
+end
+work_dir = fullfile(project_root, 'work', subject, 'spm');
 t1_file = fullfile(work_dir, 'sub-01_T1w.nii');
 pet_file = fullfile(work_dir, 'sub-01_desc-30to90min_res-2p8mm_moco_mean_pet.nii');
 

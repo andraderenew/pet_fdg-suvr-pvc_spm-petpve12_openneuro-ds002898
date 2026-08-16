@@ -1,18 +1,22 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import nibabel as nib
 import numpy as np
+from PIL import Image, ImageChops
 
-work = Path(
-    "/media/andraderenew/Elements/neuroimaging/"
-    "pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/"
-    "work/sub-01/spm"
-)
 subject = "sub-01"
+project_root = Path(
+    os.environ.get(
+        "PET_PROJECT_ROOT",
+        str(Path(__file__).resolve().parents[1]),
+    )
+)
+work = project_root / "work" / subject / "spm"
 
 pet_path = work / f"{subject}_desc-30to90min_res-2p8mm_moco_mean_pet.nii"
 t1_path = work / f"rm{subject}_T1w.nii"
@@ -97,6 +101,63 @@ for name, (t1_plane, pet_plane, tissue_plane) in planes.items():
     plt.close(fig)
     outputs.append(str(output))
 
+
+def trim_white(image: Image.Image) -> Image.Image:
+    image = image.convert("RGB")
+    background = Image.new("RGB", image.size, "white")
+    difference = ImageChops.difference(image, background)
+    box = difference.getbbox()
+    return image.crop(box) if box else image
+
+
+combined_sources = [
+    work / "qc_spm_coreg_sagittal.png",
+    work / "qc_spm_coreg_coronal.png",
+    work / "qc_spm_coreg_axial.png",
+]
+
+combined_images = [
+    trim_white(Image.open(path))
+    for path in combined_sources
+]
+
+target_height = 1050
+resized_images = []
+
+for image in combined_images:
+    width = round(image.width * target_height / image.height)
+    resized_images.append(
+        image.resize(
+            (width, target_height),
+            Image.Resampling.LANCZOS,
+        )
+    )
+
+gap = 24
+margin = 30
+
+canvas_width = (
+    sum(image.width for image in resized_images)
+    + gap * 2
+    + margin * 2
+)
+canvas_height = target_height + margin * 2
+
+canvas = Image.new(
+    "RGB",
+    (canvas_width, canvas_height),
+    "white",
+)
+
+x = margin
+
+for image in resized_images:
+    canvas.paste(image, (x, margin))
+    x += image.width + gap
+
+combined_path = work / "qc_spm_coreg_3plane.png"
+canvas.save(combined_path, dpi=(180, 180))
+
 summary = {
     "subject": subject,
     "pet_reference": str(pet_path),
@@ -108,6 +169,7 @@ summary = {
     "voxel_sizes_mm": [float(value) for value in pet_img.header.get_zooms()[:3]],
     "qc_center_voxel": [int(value) for value in center],
     "qc_images": outputs,
+    "qc_combined_3plane": str(combined_path),
 }
 
 (work / "spm_segment_coreg_summary.json").write_text(

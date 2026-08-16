@@ -3,11 +3,16 @@ clear;
 clc;
 
 subject = 'sub-01';
-spm12_dir = '/home/andraderenew/Downloads/spm12';
+project_root = getenv('PET_PROJECT_ROOT');
+if isempty(project_root)
+    project_root = fileparts(fileparts(mfilename('fullpath')));
+end
+spm12_dir = getenv('SPM12_DIR');
+if isempty(spm12_dir)
+    error('Set SPM12_DIR to the SPM12 installation directory.');
+end
 petpve12_dir = fullfile(spm12_dir, 'toolbox', 'petpve12');
-pvc_root = ['/media/andraderenew/Elements/neuroimaging/' ...
-    'pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/' ...
-    'work/sub-01/petpve12'];
+pvc_root = fullfile(project_root, 'work', subject, 'petpve12');
 
 addpath(spm12_dir);
 addpath(genpath(petpve12_dir));

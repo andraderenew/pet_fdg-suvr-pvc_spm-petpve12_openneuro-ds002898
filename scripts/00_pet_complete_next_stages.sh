@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_ROOT="${PET_PROJECT_ROOT:-$REPO_ROOT}"
+export PET_PROJECT_ROOT="$PROJECT_ROOT"
+SPM12_DIR="${SPM12_DIR:-}"
+
 STAGE="${1:-help}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -27,6 +32,9 @@ case "$STAGE" in
     suvr)
         run_stage "11_compute_suvr_roi_sensitivity.sh"
         ;;
+    diagnose)
+        run_stage "18_diagnose_pvc_suvr_sub01.sh"
+        ;;
     report)
         run_stage "12_build_public_report.sh"
         ;;
@@ -38,6 +46,7 @@ case "$STAGE" in
         run_stage "09_run_petpve12_psf_sensitivity.sh"
         run_stage "10_prepare_dk_atlas_reference.sh"
         run_stage "11_compute_suvr_roi_sensitivity.sh"
+        run_stage "18_diagnose_pvc_suvr_sub01.sh"
         run_stage "12_build_public_report.sh"
         run_stage "13_validate_complete_outputs.sh"
         ;;
@@ -45,10 +54,12 @@ case "$STAGE" in
         run_stage "14_stage_github_results.sh"
         ;;
     push-github)
-        run_stage "14_stage_github_results.sh" --push
+        echo "ERROR: direct GitHub push is disabled." >&2
+        echo "Use stage-github, inspect the diff, and merge through a reviewed pull request." >&2
+        exit 1
         ;;
     status)
-        WORK="/media/andraderenew/Elements/neuroimaging/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898/work/sub-01"
+        WORK="$PROJECT_ROOT/work/sub-01"
         echo "Work directory:"
         echo "  $WORK"
         echo
@@ -64,6 +75,7 @@ Run in this order:
   ./00_pet_complete_next_stages.sh pvc
   ./00_pet_complete_next_stages.sh atlas
   ./00_pet_complete_next_stages.sh suvr
+  ./00_pet_complete_next_stages.sh diagnose
   ./00_pet_complete_next_stages.sh report
   ./00_pet_complete_next_stages.sh validate
 
@@ -75,9 +87,10 @@ Only after reviewing every final QC image:
 
   ./00_pet_complete_next_stages.sh stage-github
 
-To commit and push after staging:
+Direct commit/push is intentionally disabled.
 
-  ./00_pet_complete_next_stages.sh push-github
+After local staging, inspect the complete Git diff and use a reviewed
+feature-branch pull request for publication.
 
 Scientific policy:
 - nominal protocol-aligned PSF: 5 mm isotropic;

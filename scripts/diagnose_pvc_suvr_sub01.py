@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 import json
 import math
 from pathlib import Path
@@ -12,8 +14,10 @@ from PIL import Image, ImageOps, ImageDraw
 
 subject = "sub-01"
 project_root = Path(
-    "/media/andraderenew/Elements/neuroimaging/"
-    "pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898"
+    os.environ.get(
+        "PET_PROJECT_ROOT",
+        str(Path(__file__).resolve().parents[1]),
+    )
 )
 work = project_root / "work" / subject
 results = work / "results"
@@ -157,6 +161,255 @@ primary_sensitivity.to_csv(
     primary_sensitivity_path,
     sep="\t",
     index=False,
+)
+
+
+decomposition = (
+    primary_roi[
+        [
+            "subject",
+            "label",
+            "region",
+            "gm50_voxel_count",
+        ]
+    ]
+    .merge(
+        primary_sensitivity[
+            [
+                "label",
+                "region",
+                "cv_percent",
+            ]
+        ].rename(
+            columns={
+                "cv_percent": "suvr_cv_percent",
+            }
+        ),
+        on=["label", "region"],
+        how="inner",
+    )
+    .merge(
+        primary_roi[
+            [
+                "label",
+                "region",
+                "pvc_psf4_mean",
+                "pvc_psf5_mean",
+                "pvc_psf6_mean",
+                "pvc_psf8_mean",
+            ]
+        ],
+        on=["label", "region"],
+        how="inner",
+    )
+)
+
+activity = decomposition[
+    [
+        "pvc_psf4_mean",
+        "pvc_psf5_mean",
+        "pvc_psf6_mean",
+        "pvc_psf8_mean",
+    ]
+].to_numpy(dtype=float)
+
+if not np.all(
+    np.isfinite(
+        decomposition["suvr_cv_percent"].to_numpy(dtype=float)
+    )
+):
+    raise SystemExit(
+        "ERROR: non-finite SUVR PSF CV in predefined primary-gray ROIs"
+    )
+
+if not np.all(np.isfinite(activity)):
+    raise SystemExit(
+        "ERROR: incomplete PVC activity across the four PSF assumptions"
+    )
+
+activity_mean = np.mean(activity, axis=1)
+activity_sd = np.std(activity, axis=1, ddof=0)
+
+decomposition["pvc_activity_cv_percent"] = (
+    activity_sd / np.abs(activity_mean) * 100.0
+)
+
+decomposition["low_gm_support_lt20"] = (
+    decomposition["gm50_voxel_count"] < 20
+).astype(int)
+
+decomposition["robust_primary_gm20"] = (
+    decomposition["gm50_voxel_count"] >= 20
+).astype(int)
+
+decomposition["normalization_cv_difference_pp"] = (
+    decomposition["suvr_cv_percent"]
+    - decomposition["pvc_activity_cv_percent"]
+)
+
+decomposition_path = (
+    results
+    / "diagnostic_primary_gray_psf_decomposition.tsv"
+)
+
+decomposition.to_csv(
+    decomposition_path,
+    sep="\t",
+    index=False,
+)
+
+robust = decomposition[
+    decomposition["robust_primary_gm20"] == 1
+].copy()
+
+if len(decomposition) != 84:
+    raise SystemExit(
+        f"ERROR: expected 84 predefined primary-gray ROIs, got {len(decomposition)}"
+    )
+
+if len(robust) != 81:
+    raise SystemExit(
+        f"ERROR: expected 81 robust primary-gray ROIs, got {len(robust)}"
+    )
+
+summary_rows = []
+
+for population, frame in (
+    ("all_predefined_primary_gray", decomposition),
+    ("robust_primary_gray_gm20", robust),
+):
+    summary_rows.append(
+        {
+            "population": population,
+            "n_rois": len(frame),
+            "suvr_cv_median_percent": frame[
+                "suvr_cv_percent"
+            ].median(),
+            "suvr_cv_max_percent": frame[
+                "suvr_cv_percent"
+            ].max(),
+            "pvc_activity_cv_median_percent": frame[
+                "pvc_activity_cv_percent"
+            ].median(),
+            "pvc_activity_cv_max_percent": frame[
+                "pvc_activity_cv_percent"
+            ].max(),
+            "suvr_cv_gt10_count": int(
+                (frame["suvr_cv_percent"] > 10.0).sum()
+            ),
+            "pvc_activity_cv_gt10_count": int(
+                (
+                    frame["pvc_activity_cv_percent"] > 10.0
+                ).sum()
+            ),
+        }
+    )
+
+robust_summary_path = (
+    results / "robust_primary_gray_psf_summary.tsv"
+)
+
+pd.DataFrame(summary_rows).to_csv(
+    robust_summary_path,
+    sep="\t",
+    index=False,
+)
+
+plot_data = (
+    primary_roi[
+        [
+            "label",
+            "region",
+            "gm50_voxel_count",
+        ]
+    ]
+    .merge(
+        primary_sensitivity,
+        on=["label", "region"],
+        how="inner",
+    )
+)
+
+plot_data = plot_data[
+    plot_data["gm50_voxel_count"] >= 20
+].copy()
+
+if len(plot_data) != 81:
+    raise SystemExit(
+        f"ERROR: expected 81 robust plot ROIs, got {len(plot_data)}"
+    )
+
+top = plot_data.sort_values(
+    "cv_percent",
+    ascending=False,
+).head(12)
+
+x = np.array([4, 5, 6, 8], dtype=float)
+
+fig = plt.figure(figsize=(12, 8))
+
+for _, row in top.iterrows():
+    y = np.array(
+        [
+            row["suvr_psf4"],
+            row["suvr_psf5"],
+            row["suvr_psf6"],
+            row["suvr_psf8"],
+        ],
+        dtype=float,
+    )
+
+    plt.plot(
+        x,
+        y,
+        marker="o",
+        linewidth=1.8,
+        label=str(row["region"]),
+    )
+
+plt.xlabel("Assumed isotropic PSF FWHM (mm)")
+plt.ylabel("Cerebellar-normalized PVC SUVR")
+plt.title(
+    "PSF sensitivity in robust primary gray-matter ROIs\n"
+    "Top 12 of 81 ROIs with GM-support >= 20 voxels"
+)
+plt.xticks(x)
+plt.legend(
+    fontsize=8,
+    loc="upper left",
+    bbox_to_anchor=(1.02, 1.0),
+)
+plt.tight_layout()
+
+robust_figure_path = (
+    results
+    / "qc_roi_psf_sensitivity_robust_primary_gray.png"
+)
+
+fig.savefig(
+    robust_figure_path,
+    dpi=180,
+    bbox_inches="tight",
+)
+
+plt.close(fig)
+
+print("ROBUST_PRIMARY_ROWS", len(robust))
+print(
+    "ROBUST_SUVR_CV_MEDIAN",
+    robust["suvr_cv_percent"].median(),
+)
+print(
+    "ROBUST_SUVR_CV_MAX",
+    robust["suvr_cv_percent"].max(),
+)
+print(
+    "ROBUST_PVC_ACTIVITY_CV_MEDIAN",
+    robust["pvc_activity_cv_percent"].median(),
+)
+print(
+    "ROBUST_PVC_ACTIVITY_CV_MAX",
+    robust["pvc_activity_cv_percent"].max(),
 )
 
 all_negative = roi[
@@ -471,25 +724,11 @@ for row, row_height in zip(rows, row_heights):
 contact_path = results / "qc_pvc_suvr_robust_diagnostic.png"
 canvas.save(contact_path)
 
-download_contact = (
-    Path.home() / "Downloads" / "qc_pvc_suvr_robust_diagnostic.png"
-)
-download_text = (
-    Path.home() / "Downloads" / "pvc_suvr_diagnostic.txt"
-)
-download_json = (
-    Path.home() / "Downloads" / "pvc_suvr_diagnostic.json"
-)
-
-Image.open(contact_path).save(download_contact)
-download_text.write_text(text_path.read_text(encoding="utf-8"), encoding="utf-8")
-download_json.write_text(json_path.read_text(encoding="utf-8"), encoding="utf-8")
-
 print("\n".join(text_lines))
 print()
 print("Diagnostic image:")
-print(f"  {download_contact}")
+print(f"  {contact_path}")
 print("Diagnostic text:")
-print(f"  {download_text}")
+print(f"  {text_path}")
 print("Diagnostic JSON:")
-print(f"  {download_json}")
+print(f"  {json_path}")

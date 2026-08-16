@@ -91,18 +91,41 @@ flowchart LR
 
 Final validation passed for motion correction, static PET construction,
 PET–T1 coregistration, tissue segmentation, atlas placement, PETPVE12 PVC,
-SUVR normalization, regional summaries and PSF sensitivity.
+SUVR normalization and regional summaries. The PSF analysis is reported with
+an explicit robustness qualification based on gray-matter support.
 
 | Validation metric | Result |
 |---|---:|
 | Selected PET frames | 225 |
-| Primary gray-matter ROIs | 84 |
-| Median PSF coefficient of variation | 1.488% |
-| Maximum PSF coefficient of variation | 7.116% |
-| Region with maximum PSF sensitivity | `ctx-lh-frontalpole` |
-| Primary ROIs above 10% PSF CV | 0 |
+| Predefined primary gray-matter ROIs | 84 |
+| Primary ROIs with GM>=0.5 support <20 voxels | 3 |
+| Robust primary gray-matter ROIs (GM>=0.5 support >=20 voxels) | 81 |
+| Median cerebellar-normalized PVC-SUVR PSF CV, robust set | 1.437% |
+| Maximum cerebellar-normalized PVC-SUVR PSF CV, robust set | 6.037% |
+| Region with maximum robust SUVR PSF sensitivity | `ctx-rh-frontalpole` |
+| Median PVC-activity PSF CV before SUVR normalization, robust set | 3.029% |
+| Maximum PVC-activity PSF CV before SUVR normalization, robust set | 8.587% |
+| Robust primary ROIs above 10% SUVR PSF CV | 0 |
+| Robust primary ROIs above 10% PVC-activity PSF CV | 0 |
 | Primary ROIs with negative nominal 5 mm PVC mean | 0 |
 | Negative nominal PVC SUVR voxels within the analysis mask | 0.1624% |
+
+All 84 predefined primary gray-matter ROIs remain in the transparent output
+tables. Three have low GM support: left pallidum (1 voxel), right pallidum
+(2 voxels), and left frontal pole (17 voxels). The left frontal pole produced
+the 7.116% maximum SUVR CV in the unfiltered 84-ROI set; after the post hoc QA 20-voxel robustness threshold, the maximum is 6.037% in the right frontal
+pole.
+
+Each PVC image is normalized by its own PSF-specific bilateral cerebellar
+reference value. The cerebellar reference changes by 6.858% from the 4 mm to
+8 mm PSF assumptions. Therefore, the normalized SUVR CV measures sensitivity
+of the complete PVC-plus-cerebellar-normalization workflow, whereas the
+PVC-activity CV reports regional PSF sensitivity before SUVR normalization.
+Both are retained to make this distinction explicit.
+
+![PET-T1 coregistration QC](results/figures/qc_spm_coreg_3plane.png)
+
+![Robust primary-gray PSF sensitivity](results/figures/qc_roi_psf_sensitivity_robust_primary_gray.png)
 
 The sparse negative PVC voxels did not produce a negative nominal mean in any
 primary gray-matter ROI. Full results and qualification of these findings are
@@ -137,9 +160,10 @@ The completed workflow used:
 - PETPVE12;
 - Python 3 with the packages listed in `requirements.txt`.
 
-The scripts retain paths from the completed portfolio run. Reproduction on
-another workstation requires adapting those paths and installing the listed
-software.
+Filesystem paths are portable. `PET_PROJECT_ROOT` selects the processing
+workspace (default: repository root), and `SPM12_DIR` selects the local SPM12
+installation for SPM/PETPVE12 stages. See
+[`env/PORTABLE_PATHS.md`](env/PORTABLE_PATHS.md) for the exact configuration.
 
 ## Methodological limitations
 
