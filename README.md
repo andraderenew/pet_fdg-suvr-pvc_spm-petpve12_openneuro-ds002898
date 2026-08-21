@@ -2,7 +2,7 @@
 
 [![Status](https://img.shields.io/badge/status-completed%20and%20validated-brightgreen)](#validated-results)
 [![Dataset](https://img.shields.io/badge/OpenNeuro-ds002898-1f6feb)](https://openneuro.org/datasets/ds002898)
-[![Version](https://img.shields.io/badge/version-v1.0.0-blue)](#citation)
+[![Version](https://img.shields.io/badge/version-v1.0.1-blue)](#citation)
 [![License](https://img.shields.io/github/license/andraderenew/pet_fdg-suvr-pvc_spm-petpve12_openneuro-ds002898)](LICENSE)
 [![ORCID](https://img.shields.io/badge/ORCID-0000--0001--5627--579X-A6CE39)](https://orcid.org/0000-0001-5627-579X)
 
@@ -188,9 +188,10 @@ large local files.
 
 Citation metadata is available in [`CITATION.cff`](CITATION.cff).
 
-A verified Zenodo DOI will be added only after the GitHub `v1.0.0` release has
-been archived successfully. No DOI is inferred or inserted before Zenodo
-confirms the record.
+Zenodo archival is being independently re-verified for this repository. A
+version-specific DOI will be added only after the GitHub `v1.0.1` release has
+been archived successfully and Zenodo confirms the record. No DOI is inferred,
+reused from another release, or inserted before that confirmation.
 
 ## Dataset reference
 
